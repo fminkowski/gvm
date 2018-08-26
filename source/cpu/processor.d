@@ -37,10 +37,10 @@ class Cpu {
 	FuncDef[] func_defs;
 
 	static const string[] registers = ["r0", "r1", "r2", "r3",
-								   	   "r4", "r5", "r6", "r7",
+								   	   "pp", "r5", "r6", "r7",
 								   	   "r8", "r9", "r10", "r11", 
 								   	   "r12", "r13", "r14", "r15", 
-								   	   "ip", "rp"];
+								   	   "ip", "rp", "cn"];
 
 	this(Stack stack, Stack static_data) {
 		this.stack = stack;
@@ -59,6 +59,10 @@ class Cpu {
 		ops[OpCommand.dec_i32]  = new Decrement!int(this);
 		ops[OpCommand.mul_i32]  = new Multiply!int(this);
 		ops[OpCommand.mul_f32]  = new Multiply!float(this);
+		ops[OpCommand.lt]   	= new LessThan(this);
+		ops[OpCommand.gt]   	= new GreaterThan(this);
+		ops[OpCommand.eq]   	= new Equal(this);
+		ops[OpCommand.neq]   	= new NotEqual(this);
 		ops[OpCommand.div_f32]  = new Divide!float(this);
 		ops[OpCommand.push_i32] = new Push!int(this, this.stack);
 		ops[OpCommand.push_f32] = new Push!float(this, this.stack);
@@ -68,7 +72,8 @@ class Cpu {
 		ops[OpCommand.put_f32]  = new Put!float(this);
 		ops[OpCommand.call]  	= new Call(this);
 		ops[OpCommand.ret]  	= new Ret(this);
-		ops[OpCommand.jump]  	= new Jump(this);
+		ops[OpCommand.jmp]  	= new Jump(this);
+		ops[OpCommand.cjmp]  	= new ConditionalJump(this);
 	}
 
 	Register get(string reg) {
@@ -79,7 +84,11 @@ class Cpu {
 		if (cmd.is_register()) {
 			return to!T(regs[cmd.val!string].val!T());
 		} else if (cmd.is_stack_addr()) {
-			return stack.get!T(cmd.get_stack_location());
+			auto location = cmd.get_stack_location();
+			if (location == -1) 			{
+				location = this.stack.last_loc;
+			}
+			return stack.get!T(location);
 		} else {
 			return cmd.val!T();
 		}

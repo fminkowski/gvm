@@ -3,7 +3,8 @@ push_i32 1000;
 push_i32 1001;
 ret;
 
-func func2;
+//add function;
+func add;
 mov_i32 r0 $8;
 mov_i32 r1 $12;
 add_i32 r0 r1;
@@ -12,8 +13,28 @@ pop_i32;
 push_i32 r0;
 ret;
 
+//sub function;
+func sub;
+mov_i32 r0 $8;
+mov_i32 r1 $12;
+sub_i32 r0 r1;
+pop_i32;
+pop_i32;
+push_i32 r0;
+ret;
+
+func lerp;
+ret;
+
 func main;
-push_i32 4;
+push_i32 12;
 push_i32 5;
-call func2;
-put_i32 $8;
+call add;
+push_i32 1;
+call sub;
+put_i32 $$;
+push_f32 1;
+mov_f32 r0 2;
+neq r0 $0;
+put_i32 r0;
+

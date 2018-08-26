@@ -21,6 +21,10 @@ enum OpCommand {
 	dec_i32,
 	mul_i32,
 	mul_f32,
+	lt,
+	gt,
+	eq,
+	neq,
 	div_f32,
 	push_i32,
 	push_f32,
@@ -31,7 +35,8 @@ enum OpCommand {
 	func,
 	call,
 	ret,
-	jump
+	jmp,
+	cjmp
 }
 
 struct Command {
@@ -48,7 +53,11 @@ struct Command {
 	}
 
 	int get_stack_location() {
-		return to!int(_val[1 .. $]);
+		auto loc = _val[1 .. $];
+		if (loc == "$") {
+			return -1;
+		}
+		return to!int(loc);
 	}
 
 	bool is_func() {
@@ -165,6 +174,74 @@ class Divide(T) : Operation {
 	}
 }
 
+class LessThan : Operation {
+	private {
+		Cpu cpu;
+	}
+
+	this(Cpu cpu) {
+		this.cpu = cpu;
+	}
+
+	override void exec(Instruction instr)	{
+		auto val1 = this.cpu.get!int(instr.val1);
+		auto val2 = this.cpu.get!int(instr.val2);
+		auto result = (val1 < val2) ? 1 : 0;
+		this.cpu.write(instr.val1.val!string, result);
+	}
+}
+
+class GreaterThan : Operation {
+	private {
+		Cpu cpu;
+	}
+
+	this(Cpu cpu) {
+		this.cpu = cpu;
+	}
+
+	override void exec(Instruction instr)	{
+		auto val1 = this.cpu.get!int(instr.val1);
+		auto val2 = this.cpu.get!int(instr.val2);
+		auto result = (val1 > val2) ? 1 : 0;
+		this.cpu.write(instr.val1.val!string, result);
+	}
+}
+
+class Equal : Operation {
+	private {
+		Cpu cpu;
+	}
+
+	this(Cpu cpu) {
+		this.cpu = cpu;
+	}
+
+	override void exec(Instruction instr)	{
+		auto val1 = this.cpu.get!int(instr.val1);
+		auto val2 = this.cpu.get!int(instr.val2);
+		auto result = (val1 == val2) ? 1 : 0;
+		this.cpu.write(instr.val1.val!string, result);
+	}
+}
+
+class NotEqual : Operation {
+	private {
+		Cpu cpu;
+	}
+
+	this(Cpu cpu) {
+		this.cpu = cpu;
+	}
+
+	override void exec(Instruction instr)	{
+		auto val1 = this.cpu.get!int(instr.val1);
+		auto val2 = this.cpu.get!int(instr.val2);
+		auto result = (val1 != val2) ? 1 : 0;
+		this.cpu.write(instr.val1.val!string, result);
+	}
+}
+
 class Move(T) : Operation {
 	private {
 		Cpu cpu;
@@ -218,7 +295,7 @@ class Pop(T) : Operation {
 
 	override void exec(Instruction instr)	{
 		auto val = this.stack.pop!T();
-		this.cpu.write!T("r10", val);
+		this.cpu.write!T("pp", val);
 	}
 }
 
@@ -250,6 +327,22 @@ class Jump : Operation {
 	override void exec(Instruction instr)	{
 		this.cpu.write_instr_ptr(instr.ptr);
 	}	
+}
+
+class ConditionalJump : Operation {
+	private {
+		Cpu cpu;
+	}
+
+	this(Cpu cpu) {
+		this.cpu = cpu;
+	}
+
+	override void exec(Instruction instr)	{
+		auto val1 = this.cpu.get!int(instr.val1);
+		auto result = (val1 == 0);
+		this.cpu.write(instr.val1.val!string, result);
+	}
 }
 
 class Call : Operation {

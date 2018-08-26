@@ -13,6 +13,7 @@ import memory.stack;
 string[] parse_instructions(string cmds) {
 	return cmds.splitter(';')
 			   .map!(s => s.strip())
+			   .array
 			   .filter!(s => !s.startsWith("//"))
 			   .array[0 .. $ - 1];
 }

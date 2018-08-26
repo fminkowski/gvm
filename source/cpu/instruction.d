@@ -14,7 +14,7 @@ struct Instruction {
 	int ptr;
 
 	static Instruction parse(string instr) {
-		auto instructions = instr.split(" ");
+		auto instructions = instr.split();
 		auto cmd = instructions[0];
 
 		Command value1, value2;
