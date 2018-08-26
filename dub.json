@@ -1,0 +1,9 @@
+{
+	"name": "vm",
+	"authors": [
+		"Fred"
+	],
+	"description": "A simple virtual machine.",
+	"copyright": "Copyright © 2018, Fred",
+	"license": "proprietary"
+}

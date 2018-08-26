@@ -1,0 +1,18 @@
+push_i32 4;
+mov_i32 r0 $0;
+inc_i32 r0;
+dec_i32 r3;
+mov_i32 $0 r0;
+push_i32 9;
+   mov_i32 r0 $0;
+mov_i32 r1 $4;
+push_i32 0;
+add_i32 r0 r1;
+mov_i32 $8 r0;
+push_i32 0;
+mov_i32 $12 r0;
+push_f32 2.75;
+push_f32 3.0;
+mov_f32 r0 $16;
+mov_f32 r1 $20;
+//mul_f32 r0 r1;
