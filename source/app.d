@@ -24,17 +24,25 @@ void main(string[] args) {
 	
 	auto file_contents = readText(args[1]);
 
+	auto i = 0;
+	FuncDef[] func_defs;
+
 	auto instructions = file_contents
 						.parse_instructions()
-						.map!(c => Instruction.parse(c))
+						.map!(delegate(string instr) {
+							auto instruction = Instruction.parse(instr);
+							instruction.ptr = i++;
+							if (instruction.op_cmd == OpCommand.func) {
+								func_defs ~= new FuncDef(instruction.val1.val!string, instruction.ptr);
+							}
+							return instruction;
+						})
 						.array;
 
 	auto stack = new Stack();
-	auto cpu = new Cpu(stack);
+	auto static_data = new Stack();
+	auto cpu = new Cpu(stack, static_data);
 
-	cpu.load(instructions);
-	cpu.run();
-	
-	writeln(cpu.get("r0").val!float);
-	writeln(cpu.get("r3").val!int);
+	cpu.load(instructions, func_defs);
+	cpu.run();	
 }

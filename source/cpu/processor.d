@@ -3,6 +3,7 @@ module cpu.processor;
 import memory.stack;
 import cpu.instruction;
 import cpu.operation;
+import util.algorithm;
 
 import std.conv;
 
@@ -26,18 +27,24 @@ struct Register {
 class Cpu {
 	private {
 		Stack stack;
+		Stack static_data;
 		Register[string] regs;
 		Operation[OpCommand] ops;
 		Instruction[] instructions;
+		const string static_data_func = "static_data";
+		const string main_func = "main";
 	}
+	FuncDef[] func_defs;
 
 	static const string[] registers = ["r0", "r1", "r2", "r3",
 								   	   "r4", "r5", "r6", "r7",
 								   	   "r8", "r9", "r10", "r11", 
-								   	   "r12", "r13", "r14", "r15"];
+								   	   "r12", "r13", "r14", "r15", 
+								   	   "ip", "rp"];
 
-	this(Stack stack) {
+	this(Stack stack, Stack static_data) {
 		this.stack = stack;
+		this.static_data = static_data;
 		foreach (n; this.registers) {
 			regs[n] = Register();
 		}
@@ -57,6 +64,11 @@ class Cpu {
 		ops[OpCommand.push_f32] = new Push!float(this, this.stack);
 		ops[OpCommand.pop_i32]  = new Pop!int(this, this.stack);
 		ops[OpCommand.pop_f32]  = new Pop!float(this, this.stack);
+		ops[OpCommand.put_i32]  = new Put!int(this);
+		ops[OpCommand.put_f32]  = new Put!float(this);
+		ops[OpCommand.call]  	= new Call(this);
+		ops[OpCommand.ret]  	= new Ret(this);
+		ops[OpCommand.jump]  	= new Jump(this);
 	}
 
 	Register get(string reg) {
@@ -89,18 +101,62 @@ class Cpu {
 		return dump_string;
 	}
 
-	void load(Instruction[] instructions) {
+	void load(Instruction[] instructions, FuncDef[] func_defs) {
 		this.instructions = instructions.dup;
+		this.func_defs = func_defs.dup;
+		auto static_data_func = this.func_defs.first!FuncDef(f => f.name == static_data_func);
+		if (static_data_func !is null) {
+			auto static_data_ip = static_data_func.ptr + 1;
+			this.write_instr_ptr(static_data_ip);
+			run_static_data();
+		}
+		auto main_func = this.func_defs.first!FuncDef(f => f.name == main_func);
+		auto ip = main_func.ptr + 1;
+		this.write_instr_ptr(ip);
 	}
 
 	void run() {
-		foreach (instr; this.instructions) {
+		while (this.read_instr_ptr < this.instructions.length) {
+			auto ip = this.read_instr_ptr;
+			auto instr = this.instructions[ip];
 			this.exec(instr);
+			this.inc_instruction_ptr();
 		}
 	}
 
 	void exec(Instruction instr) {
 		auto op = this.ops[instr.op_cmd];
 		op.exec(instr);
+	}
+
+	void write_instr_ptr(int val) {
+		this.write("ip", val);
+	}
+
+	void run_static_data() {
+		while (true) {
+			auto ip = this.read_instr_ptr;
+			auto instr = this.instructions[ip];
+			if (instr.op_cmd == OpCommand.ret) break;
+			this.exec(instr);
+			this.inc_instruction_ptr();
+		}
+	}
+
+	int read_instr_ptr() {
+		return this.get("ip").val!int;
+	}
+
+	void write_ret_ptr(int val) {
+		this.write("rp", val);
+	}
+
+	int read_ret_ptr() {
+		return this.get("rp").val!int;
+	}
+
+	private void inc_instruction_ptr() {
+		auto next_instr_ptr = this.read_instr_ptr + 1;
+		write_instr_ptr(next_instr_ptr);
 	}
 }

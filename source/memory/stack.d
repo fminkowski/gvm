@@ -21,8 +21,8 @@ class Stack {
 
 	T pop(T)() {
 		this.location -= T.sizeof;
-		auto value = cast(T)(memory[this.location]);
-		return value;
+		auto val = cast(T*)(&memory[this.location]);
+		return *val;
 	}
 
 	T get(T)(size_t loc) {

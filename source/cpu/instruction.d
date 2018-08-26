@@ -11,6 +11,7 @@ struct Instruction {
 	OpCommand op_cmd;
 	Command val1;
 	Command val2;
+	int ptr;
 
 	static Instruction parse(string instr) {
 		auto instructions = instr.split(" ");
