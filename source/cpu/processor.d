@@ -125,7 +125,7 @@ class Cpu {
 	}
 
 	void run() {
-		auto main_func = this.func_defs.first!FuncDef(f => f.name == main_func_name);
+		auto main_func = this.func_defs.first!FuncDef(f => f.name == main_func_name);		
 		push_call(main_func, main_func.ptr);
 		this.run_func(main_func);
 	}
@@ -142,7 +142,7 @@ class Cpu {
 	void run_func(FuncDef func) {
 		auto func_ip = func.ptr + 1;
 		this.write_instr_ptr(func_ip);
-		size_t ip;
+		size_t ip = -1;
 		while (ip != func.ptr) {
 			ip = this.read_instr_ptr;
 			auto instr = this.instructions[ip];
