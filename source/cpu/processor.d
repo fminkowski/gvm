@@ -26,15 +26,15 @@ struct Register {
 
 class Cpu {
 	private {
+		FuncDef[] func_defs;
 		Stack!ubyte stack;
 		Stack!FuncDef call_stack;
 		Register[string] regs;
 		Operation[OpCommand] ops;
 		Instruction[] instructions;
-		const string static_data_func_name = "static_data";
-		const string main_func_name = "main";
+		static const string static_data_func_name = "static_data";
+		static const string main_func_name = "main";
 	}
-	FuncDef[] func_defs;
 
 	static const string[] registers = ["r0", "r1", "r2", "r3",
 								   	   "pp", "r5", "r6", "r7",
@@ -42,8 +42,9 @@ class Cpu {
 								   	   "r12", "r13", "r14", "rs", 
 								   	   "ip", "rp", "cn"];
 
-	this(Stack!ubyte stack, Stack!FuncDef call_stack) {
+	this(Stack!ubyte stack, Stack!FuncDef call_stack, FuncDef[] func_defs) {
 		this.stack = stack;
+		this.func_defs = func_defs;
 		this.call_stack = call_stack;
 		foreach (n; this.registers) {
 			regs[n] = Register();
@@ -70,7 +71,7 @@ class Cpu {
 		ops[OpCommand.pop_f32]  = new Pop!float(this, this.stack);
 		ops[OpCommand.put_i32]  = new Put!int(this);
 		ops[OpCommand.put_f32]  = new Put!float(this);
-		ops[OpCommand.call]  	= new Call(this, this.stack);
+		ops[OpCommand.call]  	= new Call(this, this.stack, this.func_defs);
 		ops[OpCommand.ret]  	= new Ret(this, this.stack);
 		ops[OpCommand.jmp]  	= new Jump(this);
 		ops[OpCommand.cjmp]  	= new ConditionalJump(this);
@@ -110,9 +111,8 @@ class Cpu {
 		return dump_string;
 	}
 
-	void load(Instruction[] instructions, FuncDef[] func_defs) {
+	void load(Instruction[] instructions) {
 		this.instructions = instructions.dup;
-		this.func_defs = func_defs.dup;
 		auto static_data_func = this.func_defs.first!FuncDef(f => f.name == static_data_func_name);
 		if (static_data_func !is null) {
 			push_call(static_data_func, static_data_func.ptr);

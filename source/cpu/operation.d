@@ -361,16 +361,18 @@ class ConditionalJump : Operation {
 class Call : Operation {
 	private {
 		Cpu cpu;
+		FuncDef[] func_defs;
 		Jump jump;
 	}
 
-	this(Cpu cpu, Stack!ubyte stack) {
+	this(Cpu cpu, Stack!ubyte stack, FuncDef[] func_defs) {
 		this.cpu = cpu;
+		this.func_defs = func_defs;
 		jump = new Jump(this.cpu);
 	}
 
 	override void exec(Instruction instr)	{
-		auto func = this.cpu.func_defs.first!FuncDef(f => f.name == instr.val1.val!string);
+		auto func = this.func_defs.first!FuncDef(f => f.name == instr.val1.val!string);
 		this.cpu.push_call(func, instr.ptr);
 
 		Instruction jump_instr;

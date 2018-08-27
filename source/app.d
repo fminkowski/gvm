@@ -42,8 +42,8 @@ void main(string[] args) {
 
 	auto stack = new Stack!ubyte();
 	auto call_stack = new Stack!FuncDef();
-	auto cpu = new Cpu(stack, call_stack);
+	auto cpu = new Cpu(stack, call_stack, func_defs);
 
-	cpu.load(instructions, func_defs);
+	cpu.load(instructions);
 	cpu.run();	
 }
