@@ -27,13 +27,12 @@ struct Register {
 class Cpu {
 	private {
 		Stack!ubyte stack;
-		Stack!ubyte static_data;
 		Stack!FuncDef call_stack;
 		Register[string] regs;
 		Operation[OpCommand] ops;
 		Instruction[] instructions;
-		const string static_data_func = "static_data";
-		const string main_func = "main";
+		const string static_data_func_name = "static_data";
+		const string main_func_name = "main";
 	}
 	FuncDef[] func_defs;
 
@@ -43,9 +42,8 @@ class Cpu {
 								   	   "r12", "r13", "r14", "rs", 
 								   	   "ip", "rp", "cn"];
 
-	this(Stack!ubyte stack, Stack!ubyte static_data, Stack!FuncDef call_stack) {
+	this(Stack!ubyte stack, Stack!FuncDef call_stack) {
 		this.stack = stack;
-		this.static_data = static_data;
 		this.call_stack = call_stack;
 		foreach (n; this.registers) {
 			regs[n] = Register();
@@ -96,7 +94,7 @@ class Cpu {
 		}
 	}
 
-	void write(T)(string reg, T value) {		
+	void write(T)(string reg, T value) {
 		regs[reg].write!T(value);
 	}
 
@@ -115,27 +113,17 @@ class Cpu {
 	void load(Instruction[] instructions, FuncDef[] func_defs) {
 		this.instructions = instructions.dup;
 		this.func_defs = func_defs.dup;
-		auto static_data_func = this.func_defs.first!FuncDef(f => f.name == static_data_func);
+		auto static_data_func = this.func_defs.first!FuncDef(f => f.name == static_data_func_name);
 		if (static_data_func !is null) {
 			push_call(static_data_func, static_data_func.ptr);
-			run_func(static_data_func);
-			pop_call();
+			run_simple_func(static_data_func);
 		}
 	}
 
 	void run() {
-		auto main_func = this.func_defs.first!FuncDef(f => f.name == main_func);
-		auto main_ip = main_func.ptr + 1;
-		this.write_instr_ptr(main_ip);
+		auto main_func = this.func_defs.first!FuncDef(f => f.name == main_func_name);
 		push_call(main_func, main_func.ptr);
-		size_t ip;
-		while (this.read_instr_ptr < this.instructions.length && ip != main_func.ptr) {
-			ip = this.read_instr_ptr;
-			auto instr = this.instructions[ip];
-			this.exec(instr);
-			ip = this.read_instr_ptr;
-			this.inc_instruction_ptr();
-		}
+		this.run_func(main_func);
 	}
 
 	void exec(Instruction instr) {
@@ -148,12 +136,26 @@ class Cpu {
 	}
 
 	void run_func(FuncDef func) {
-		auto static_data_ip = func.ptr + 1;
-		this.write_instr_ptr(static_data_ip);
-		while (true) {
-			auto ip = this.read_instr_ptr;
+		auto func_ip = func.ptr + 1;
+		this.write_instr_ptr(func_ip);
+		size_t ip;
+		while (ip != func.ptr) {
+			ip = this.read_instr_ptr;
 			auto instr = this.instructions[ip];
-			if (instr.op_cmd == OpCommand.ret) break;
+			this.exec(instr);
+			ip = this.read_instr_ptr;
+			this.inc_instruction_ptr();
+		}
+	}
+
+	void run_simple_func(FuncDef func) {
+		auto func_ip = func.ptr + 1;
+		this.write_instr_ptr(func_ip);
+		size_t ip;
+		while (true) {
+			ip = this.read_instr_ptr;
+			auto instr = this.instructions[ip];
+			if (instr.op_cmd == OpCommand.ret) break; 
 			this.exec(instr);
 			this.inc_instruction_ptr();
 		}
@@ -179,10 +181,6 @@ class Cpu {
 	void pop_call() {
 		this.call_stack.pop!FuncDef();
 		this.stack.pop!int();
-	}
-
-	@property FuncDef last_call() {
-		return this.call_stack.top!FuncDef();
 	}
 
 	private void inc_instruction_ptr() {

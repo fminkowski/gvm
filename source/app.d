@@ -41,9 +41,8 @@ void main(string[] args) {
 						.array;
 
 	auto stack = new Stack!ubyte();
-	auto static_data = new Stack!ubyte();
 	auto call_stack = new Stack!FuncDef();
-	auto cpu = new Cpu(stack, static_data, call_stack);
+	auto cpu = new Cpu(stack, call_stack);
 
 	cpu.load(instructions, func_defs);
 	cpu.run();	

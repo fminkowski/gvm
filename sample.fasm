@@ -1,8 +1,3 @@
-func static_data;
-//push_i32 1000;
-//push_i32 1001;
-ret;
-
 //add function;
 func add;
 mov_i32 r0 @$-2;
@@ -12,34 +7,54 @@ mov_i32 rs r0;
 ret;
 
 //sub function;
-//func sub;
-//mov_i32 r0 @$-1;
-//mov_i32 r1 @$;
-//sub_i32 r0 r1;
-//mov_i32 rs r0;
-//pop_i32;
-//pop_i32;
-//ret;
-
-func add3;
-call add;
-call add;
-put_i32 @$;
-put_i32 @$-1;
-put_i32 @$-2;
+func sub;
+mov_i32 r0 @$-2;
+mov_i32 r1 @$-1;
+sub_i32 r0 r1;
+mov_i32 rs r0;
 ret;
 
+//func add3;
+func add3;
+push_i32 @$-1;
+push_i32 @$-3;
+push_i32 @$-5;
+call add;
+pop_i32;
+pop_i32;
+push_i32 rs;
+call add;
+pop_i32;
+pop_i32;
+ret;
+
+//static_data is always called first to initialize the stack;
+//it is not required though;
+func static_data;
+push_i32 1000;
+push_i32 1001;
+ret;
+
+//main is the entry point to the program;
+//it is required;
 func main;
 push_i32 1;
 push_i32 2;
-push_i32 3;
-put_i32 @$;
-call add;
+push_i32 6;
+call add3;
+pop_i32;
+pop_i32;
+pop_i32;
+
+//push result of 1 + 2 + 3 = 6 onto the stack from the return result register (rs);
 push_i32 rs;
+push_i32 2;
+call sub;
+
+//push result of 6 - 2 = 4 onto the stack from the return register (rs);
+put_i32 rs;
+pop_i32;
+pop_i32;
 put_i32 @$;
-pop_i32;
-pop_i32;
-pop_i32;
-pop_i32;
 ret;
 
