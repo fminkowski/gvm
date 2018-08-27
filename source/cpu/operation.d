@@ -43,7 +43,7 @@ struct Command {
 	private {
 		string _val;
 		string _stack_addr_sym = "@";
-		string _end_stack_sym = "$";
+		string _stack_sym = "$";
 	}
 
 	bool is_stack_addr() {
@@ -59,13 +59,18 @@ struct Command {
 		import std.array;
 
 		auto loc = _val[1 .. $];
-		if (loc.startsWith(_end_stack_sym)) {
+		if (loc.startsWith(_stack_sym)) {
 			auto expr = loc.split("-").map!(s => s.strip()).array;
 			if (expr.length > 1) {
-				auto offset = -(1 + expr[1].to!int);
+				auto offset = -(expr[1].to!int);
 				return offset;
 			}
-			return -1;
+			expr = loc.split("+").map!(s => s.strip()).array;
+			if (expr.length > 1) {
+				auto offset = (expr[1].to!int);
+				return offset;
+			}
+			return 0;
 		}
 		return to!int(loc);
 	}
@@ -338,23 +343,28 @@ class Jump : Operation {
 	}
 
 	override void exec(Instruction instr)	{
-		this.cpu.write_instr_ptr(instr.ptr);
+		auto offset = instr.val1.get_stack_location();
+		this.cpu.write_instr_ptr(instr.ptr + offset);
 	}	
 }
 
 class ConditionalJump : Operation {
 	private {
 		Cpu cpu;
+		Jump jump;
 	}
 
 	this(Cpu cpu) {
 		this.cpu = cpu;
+		this.jump = new Jump(cpu);
 	}
 
 	override void exec(Instruction instr)	{
-		auto val1 = this.cpu.get!int(instr.val1);
-		auto result = (val1 == 0);
-		this.cpu.write(instr.val1.val!string, result);
+		auto val1 = this.cpu.get("cn").val!int;
+		auto should_jump = (val1 != 0);
+		if (should_jump) {
+			jump.exec(instr);
+		}
 	}
 }
 

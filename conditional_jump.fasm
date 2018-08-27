@@ -1,0 +1,25 @@
+func static_data;
+push_i32 1000;
+push_i32 1001;
+ret;
+
+//output is 1, 2, 5, 6;
+func main;
+put_i32 1;
+
+//false - no jump;
+mov_i32 cn 0;
+cjmp @$+2;
+put_i32 2;
+
+//true - jumps to put_i32 4;
+//and executes next instruction;
+mov_i32 cn 1;
+cjmp @$+2;
+
+put_i32 3;
+put_i32 4;
+put_i32 5;
+put_i32 6;
+ret;
+
