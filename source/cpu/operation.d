@@ -42,10 +42,12 @@ enum OpCommand {
 struct Command {
 	private {
 		string _val;
+		string _stack_addr_sym = "@";
+		string _end_stack_sym = "$";
 	}
 
 	bool is_stack_addr() {
-		return _val.startsWith("$");
+		return _val.startsWith(_stack_addr_sym);
 	}
 
 	bool is_register() {
@@ -53,8 +55,16 @@ struct Command {
 	}
 
 	int get_stack_location() {
+		import std.string;
+		import std.array;
+
 		auto loc = _val[1 .. $];
-		if (loc == "$") {
+		if (loc.startsWith(_end_stack_sym)) {
+			auto expr = loc.split("-").map!(s => s.strip()).array;
+			if (expr.length > 1) {
+				auto offset = -(1 + expr[1].to!int);
+				return offset;
+			}
 			return -1;
 		}
 		return to!int(loc);
@@ -245,10 +255,10 @@ class NotEqual : Operation {
 class Move(T) : Operation {
 	private {
 		Cpu cpu;
-		Stack stack;
+		Stack!ubyte stack;
 	}
 
-	this(Cpu cpu, Stack stack) {
+	this(Cpu cpu, Stack!ubyte stack) {
 		this.cpu = cpu;
 		this.stack = stack;
 	}
@@ -268,32 +278,36 @@ class Move(T) : Operation {
 class Push(T) : Operation {
 	private {
 		Cpu cpu;
-		Stack stack;
+		Stack!ubyte stack;
 	}
 
-	this(Cpu cpu, Stack stack) {
+	this(Cpu cpu, Stack!ubyte stack) {
 		this.cpu = cpu;
 		this.stack = stack;
 	}
 
 	override void exec(Instruction instr)	{
 		T value = this.cpu.get!T(instr.val1);
-		this.stack.push!T(value);
+		this.push!T(value);
+	}
+
+	void push(T)(T val)	{
+		this.stack.push!T(val);
 	}
 }
 
 class Pop(T) : Operation {
 	private {
 		Cpu cpu;
-		Stack stack;
+		Stack!ubyte stack;
 	}
 
-	this(Cpu cpu, Stack stack) {
+	this(Cpu cpu, Stack!ubyte stack) {
 		this.cpu = cpu;
 		this.stack = stack;
 	}
 
-	override void exec(Instruction instr)	{
+	override void exec(Instruction instr) {
 		auto val = this.stack.pop!T();
 		this.cpu.write!T("pp", val);
 	}
@@ -309,9 +323,8 @@ class Put(T) : Operation {
 	}
 
 	override void exec(Instruction instr)	{
-		import std.stdio;
 		auto val = this.cpu.get!T(instr.val1);
-		writeln(val);
+		import std.stdio; writeln(val);
 	}	
 }
 
@@ -351,16 +364,17 @@ class Call : Operation {
 		Jump jump;
 	}
 
-	this(Cpu cpu) {
+	this(Cpu cpu, Stack!ubyte stack) {
 		this.cpu = cpu;
 		jump = new Jump(this.cpu);
 	}
 
 	override void exec(Instruction instr)	{
-		auto instr_pointer = this.cpu.func_defs.first!FuncDef(f => f.name == instr.val1.val!string).ptr;
-		this.cpu.write_ret_ptr(this.cpu.read_instr_ptr);
+		auto func = this.cpu.func_defs.first!FuncDef(f => f.name == instr.val1.val!string);
+		this.cpu.push_call(func, instr.ptr);
+
 		Instruction jump_instr;
-		jump_instr.ptr = instr_pointer;
+		jump_instr.ptr = func.ptr;
 		jump.exec(jump_instr);
 	}	
 }
@@ -368,17 +382,22 @@ class Call : Operation {
 class Ret : Operation {
 	private {
 		Cpu cpu;
+		Stack!ubyte stack;
 		Jump jump;
+		Pop!ubyte pop;
 	}
 
-	this(Cpu cpu) {
+	this(Cpu cpu, Stack!ubyte stack) {
 		this.cpu = cpu;
+		this.stack = stack;
 		jump = new Jump(this.cpu);
+		pop = new Pop!ubyte(this.cpu, stack);
 	}
 
 	override void exec(Instruction instr)	{
-		auto instr_pointer = this.cpu.read_ret_ptr;
-		this.cpu.write_instr_ptr(instr_pointer);
+		auto ret_addr = this.stack.top!int;
+		this.cpu.pop_call();
+		this.cpu.write_instr_ptr(ret_addr);
 	}	
 }
 

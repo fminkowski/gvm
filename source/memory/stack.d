@@ -3,12 +3,12 @@ module memory.stack;
 import std.conv;
 import std.algorithm.iteration;
 
-class Stack {
+class Stack(T) {
 	private {
 		size_t size_location;
 		size_t location;
 		const size_t memory_size = 4096;
-		ubyte[memory_size] memory;
+		T[memory_size] memory;
 		size_t[memory_size] memory_sizes;
 	}
 
@@ -31,6 +31,10 @@ class Stack {
 		return *val;
 	}
 
+	@property T top(T)() {
+		return *cast(T*)(&memory[this.offset(-1)]);
+	}
+
 	T get(T)(size_t loc) {
 		return *cast(T*)(&memory[loc]);
 	}
@@ -39,8 +43,19 @@ class Stack {
 		return this.location;
 	}
 
-	@property size_t last_loc() {
-		return this.memory_sizes[0 .. this.size_location - 1].reduce!((a,b) => a + b);
+	@property size_t offset(int i) {
+		if (-i >= this.size_location) {
+			return 0;
+		}
+		return this.memory_sizes[0 .. this.size_location + i].reduce!((a,b) => a + b);
+	}
+
+	@property bool empty() {
+		return this.size_location == 0;
+	}
+
+	@property size_t count() {
+		return this.size_location;
 	}
 
 	override string toString() {
