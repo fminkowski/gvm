@@ -54,7 +54,7 @@ struct Command {
 		return Cpu.registers.canFind(_val);
 	}
 
-	int get_stack_location() {
+	int get_offset() {
 		import std.string;
 		import std.array;
 
@@ -279,7 +279,7 @@ class Move(T) : Operation {
 		if (instr.val1.is_register()) {
 			this.cpu.write(instr.val1.val!string, val2);
 		} else {
-			auto location = instr.val1.get_stack_location();
+			auto location = instr.val1.get_offset();
 			this.stack.write(location, val2);
 		}
 	}
@@ -348,7 +348,7 @@ class Jump : Operation {
 	}
 
 	override void exec(Instruction instr)	{
-		auto offset = instr.val1.get_stack_location();
+		auto offset = instr.val1.get_offset();
 		this.cpu.write_instr_ptr(instr.ptr + offset);
 	}	
 }
