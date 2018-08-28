@@ -2,8 +2,8 @@ module gvm.cpu.operation;
 
 import gvm.cpu.processor;
 import gvm.cpu.instruction;
-
 import gvm.memory.stack;
+import gvm.util.test;
 
 import std.algorithm;
 import std.conv;
@@ -43,7 +43,7 @@ struct Command {
 	private {
 		string _val;
 		string _stack_addr_sym = "@";
-		string _stack_sym = "$";
+		string _location_sym = "$";
 	}
 
 	bool is_stack_addr() {
@@ -54,27 +54,26 @@ struct Command {
 		return Cpu.registers.canFind(_val);
 	}
 
-	int get_offset() {
+	@property int offset() {
 		import std.string;
 		import std.array;
 
-		if (_val.null_or_empty) {
+		if (_val.null_or_empty || _val.length == 1) {
 			return 0;
 		}
 
 		auto loc = _val[1 .. $];
-		if (loc.startsWith(_stack_sym)) {
+		if (loc.startsWith(_location_sym)) {
 			auto expr = loc.split("-").map!(s => s.strip()).array;
+			int offset;
 			if (expr.length > 1) {
-				auto offset = -(expr[1].to!int);
-				return offset;
+				offset = -(expr[1].to!int);
 			}
 			expr = loc.split("+").map!(s => s.strip()).array;
 			if (expr.length > 1) {
-				auto offset = (expr[1].to!int);
-				return offset;
+				offset = (expr[1].to!int);
 			}
-			return 0;
+			return offset;
 		}
 		return to!int(loc);
 	}
@@ -86,6 +85,34 @@ struct Command {
 	@property T val(T)(){
 		return to!(T)(_val);
 	}
+}
+
+@test("get offset returns 0 for empty value")
+unittest {
+	auto cmd = Command();
+	auto offset = cmd.offset;
+	areEqual(0, offset);
+}
+
+@test("get offset returns 0 for only current location symbol")
+unittest {
+	auto cmd = Command("$");
+	auto offset = cmd.offset;
+	areEqual(0, offset);
+}
+
+@test("get offset returns correct value for negative offset")
+unittest {
+	auto cmd = Command("@$-2");
+	auto offset = cmd.offset;
+	areEqual(-2, offset);
+}
+
+@test("get offset returns correct value for positive offset")
+unittest {
+	auto cmd = Command("@$+2");
+	auto offset = cmd.offset;
+	areEqual(2, offset);
 }
 
 abstract class Operation {
@@ -279,7 +306,7 @@ class Move(T) : Operation {
 		if (instr.val1.is_register()) {
 			this.cpu.write(instr.val1.val!string, val2);
 		} else {
-			auto location = instr.val1.get_offset();
+			auto location = instr.val1.offset;
 			this.stack.write(location, val2);
 		}
 	}
@@ -348,7 +375,7 @@ class Jump : Operation {
 	}
 
 	override void exec(Instruction instr)	{
-		auto offset = instr.val1.get_offset();
+		auto offset = instr.val1.offset;
 		this.cpu.write_instr_ptr(instr.ptr + offset);
 	}	
 }

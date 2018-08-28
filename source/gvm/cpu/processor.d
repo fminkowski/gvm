@@ -89,7 +89,7 @@ class Cpu {
 		if (cmd.is_register()) {
 			return to!T(regs[cmd.val!string].val!T());
 		} else if (cmd.is_stack_addr()) {
-			auto location = cmd.get_offset();
+			auto location = cmd.offset;
 			if (location < 0) {
 				location = this.stack.offset(location);
 			}
