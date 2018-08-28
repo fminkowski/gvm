@@ -58,6 +58,10 @@ struct Command {
 		import std.string;
 		import std.array;
 
+		if (_val.null_or_empty) {
+			return 0;
+		}
+
 		auto loc = _val[1 .. $];
 		if (loc.startsWith(_stack_sym)) {
 			auto expr = loc.split("-").map!(s => s.strip()).array;
@@ -115,7 +119,7 @@ class Increment(T) : Operation {
 		this.cpu = cpu;
 	}
 
-	override void exec(Instruction instr)	{
+	override void exec(Instruction instr)	{		
 		auto val1 = this.cpu.get!T(instr.val1);
 		auto result = ++val1;
 		this.cpu.write(instr.val1.val!string, result);
@@ -235,6 +239,7 @@ class Equal : Operation {
 	override void exec(Instruction instr)	{
 		auto val1 = this.cpu.get!int(instr.val1);
 		auto val2 = this.cpu.get!int(instr.val2);
+
 		auto result = (val1 == val2) ? 1 : 0;
 		this.cpu.write(instr.val1.val!string, result);
 	}
@@ -386,7 +391,7 @@ class Call : Operation {
 		this.cpu.push_call(func, instr.ptr);
 
 		Instruction jump_instr;
-		jump_instr.ptr = func.ptr;
+		jump_instr.ptr = func.ptr;		
 		jump.exec(jump_instr);
 	}	
 }

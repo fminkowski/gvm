@@ -1,14 +1,24 @@
+func for;
+put_i32 123;
+put_i32 456;
+mov_i32 r0 @$-2;
+neq r0 r1;
+mov_i32 cn r0;
+inc_i32 r1;
+cjmp @$-7;
+ret;
+
 //output is 1, 2, 5, 6;
-func main;
+func cond_jmp;
 put_i32 1;
 
-//false - no jump;
+// false - no jump;
 mov_i32 cn 0;
 cjmp @$+2;
 put_i32 2;
 
-//true - jumps to put_i32 4;
-//and executes next instruction;
+// true - jumps to put_i32 4;
+// and executes next instruction;
 mov_i32 cn 1;
 cjmp @$+2;
 
@@ -18,3 +28,13 @@ put_i32 5;
 put_i32 6;
 ret;
 
+func main;
+call cond_jmp;
+//loop conditional rs != 4;
+push_i32 4;
+//initial interator value;
+mov_i32 r1 0;
+call for;
+pop_i32;
+
+ret;
