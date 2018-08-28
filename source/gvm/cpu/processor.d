@@ -1,9 +1,9 @@
-module cpu.processor;
+module gvm.cpu.processor;
 
-import memory.stack;
-import cpu.instruction;
-import cpu.operation;
-import util.algorithm;
+import gvm.memory.stack;
+import gvm.cpu.instruction;
+import gvm.cpu.operation;
+import gvm.util.algorithm;
 
 import std.conv;
 

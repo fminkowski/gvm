@@ -1,4 +1,4 @@
-module memory.stack;
+module gvm.memory.stack;
 
 import std.conv;
 import std.algorithm.iteration;

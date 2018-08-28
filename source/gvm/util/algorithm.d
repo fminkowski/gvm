@@ -1,6 +1,6 @@
-module util.algorithm;
+module gvm.util.algorithm;
 
-bool null_or_empty(T)(T val) {
+bool null_or_empty(string val) {
 	return val is null || val == val.init;
 }
 

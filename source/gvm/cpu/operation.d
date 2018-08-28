@@ -1,13 +1,13 @@
-module cpu.operation;
+module gvm.cpu.operation;
 
-import cpu.processor;
-import cpu.instruction;
+import gvm.cpu.processor;
+import gvm.cpu.instruction;
 
-import memory.stack;
+import gvm.memory.stack;
 
 import std.algorithm;
 import std.conv;
-import util.algorithm;
+import gvm.util.algorithm;
 
 enum OpCommand {
 	none,
