@@ -181,7 +181,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val1.to!string));
+	auto instr = Instruction(OpCommand.inc_i32, Command("r0"), Command(val1.to!string));
 
 	auto increment = new Increment!int(cpu);
 	increment.exec(instr);
@@ -215,7 +215,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val1.to!string));
+	auto instr = Instruction(OpCommand.dec_i32, Command("r0"), Command(val1.to!string));
 
 	auto decrement = new Decrement!int(cpu);
 	decrement.exec(instr);
@@ -251,7 +251,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.sub_i32, Command("r0"), Command(val2.to!string));
 
 	auto subtract = new Subtract!int(cpu);
 	subtract.exec(instr);
@@ -287,7 +287,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.mul_i32, Command("r0"), Command(val2.to!string));
 
 	auto multiply = new Multiply!int(cpu);
 	multiply.exec(instr);
@@ -323,9 +323,9 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.div_f32, Command("r0"), Command(val2.to!string));
 
-	auto divide = new Divide!int(cpu);
+	auto divide = new Divide!float(cpu);
 	divide.exec(instr);
 
 	auto register = cpu.get("r0");
@@ -359,7 +359,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.lt, Command("r0"), Command(val2.to!string));
 
 	auto less_than = new LessThan(cpu);
 	less_than.exec(instr);
@@ -395,7 +395,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.gt, Command("r0"), Command(val2.to!string));
 
 	auto greater_than = new GreaterThan(cpu);
 	greater_than.exec(instr);
@@ -432,7 +432,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.eq, Command("r0"), Command(val2.to!string));
 
 	auto equal = new Equal(cpu);
 	equal.exec(instr);
@@ -468,7 +468,7 @@ unittest {
 	FuncDef[] call_stack;
 	auto cpu = new Cpu(stack, call_stack);
 	cpu.write("r0", val1);
-	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+	auto instr = Instruction(OpCommand.neq, Command("r0"), Command(val2.to!string));
 
 	auto not_equal = new NotEqual(cpu);
 	not_equal.exec(instr);
@@ -501,6 +501,40 @@ class Move(T) : Operation {
 	}
 }
 
+@test("Move operation moves value to register")
+unittest {
+	auto val1 = 3;
+	auto register_name = "r1";
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	auto instr = Instruction(OpCommand.mov_i32, Command(register_name), Command(val1.to!string));
+
+	auto move = new Move!int(cpu, stack);
+	move.exec(instr);
+
+	auto register = cpu.get(register_name);
+	areEqual(val1, register.val!int);
+}
+
+@test("Move operation moves value to stack")
+unittest {
+	auto val1 = 3;
+	auto stack_location = "@0";
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	auto instr = Instruction(OpCommand.mov_i32, Command(stack_location), Command(val1.to!string));
+
+	auto move = new Move!int(cpu, stack);
+	move.exec(instr);
+
+	auto stack_value = cpu.get!int(Command(stack_location));
+	areEqual(val1, stack_value);
+}
+
 class Push(T) : Operation {
 	private {
 		Cpu cpu;
@@ -522,6 +556,22 @@ class Push(T) : Operation {
 	}
 }
 
+@test("Push operation pushes value onto stack")
+unittest {
+	auto val1 = 6;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	auto instr = Instruction(OpCommand.push_i32, Command(val1.to!string), Command());
+
+	auto push = new Push!int(cpu, stack);
+	push.exec(instr);
+
+	auto stack_value = stack.top!int;
+	areEqual(val1, stack_value);
+}
+
 class Pop(T) : Operation {
 	private {
 		Cpu cpu;
@@ -537,6 +587,28 @@ class Pop(T) : Operation {
 		auto val = this.stack.pop!T();
 		this.cpu.write!T("pp", val);
 	}
+}
+
+@test("Pop operation pops value from stack")
+unittest {
+	auto val1 = 6;
+	auto val2 = 7;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	stack.push!int(val1);
+	stack.push!int(val2);
+	auto instr = Instruction(OpCommand.pop_i32, Command(val1.to!string), Command());
+
+	auto stack_value = stack.top!int;
+	areEqual(val2, stack_value);
+
+	auto pop = new Pop!int(cpu, stack);
+	pop.exec(instr);
+
+	stack_value = stack.top!int;
+	areEqual(val1, stack_value);
 }
 
 class Put(T) : Operation {
