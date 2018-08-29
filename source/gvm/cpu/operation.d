@@ -241,6 +241,25 @@ class Subtract(T) : Operation {
 	}
 }
 
+@test("Subtract operation subtracts values and sets result in register")
+unittest {
+	auto val1 = 5;
+	auto val2 = 2;
+	auto expected_result = val1 - val2;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto subtract = new Subtract!int(cpu);
+	subtract.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class Multiply(T) : Operation {
 	private {
 		Cpu cpu;
@@ -256,6 +275,25 @@ class Multiply(T) : Operation {
 		auto result = val1 * val2;
 		this.cpu.write(instr.val1.val!string, result);
 	}
+}
+
+@test("Multiply operation multiplies values and sets result in register")
+unittest {
+	auto val1 = 5;
+	auto val2 = 2;
+	auto expected_result = val1 * val2;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto multiply = new Multiply!int(cpu);
+	multiply.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
 }
 
 class Divide(T) : Operation {
@@ -275,6 +313,25 @@ class Divide(T) : Operation {
 	}
 }
 
+@test("Divide operation divides values and sets result in register")
+unittest {
+	auto val1 = 5;
+	auto val2 = 2;
+	auto expected_result = val1 / val2;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto divide = new Divide!int(cpu);
+	divide.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class LessThan : Operation {
 	private {
 		Cpu cpu;
@@ -292,6 +349,25 @@ class LessThan : Operation {
 	}
 }
 
+@test("LessThan operation checks if value is less than other value and sets it in register")
+unittest {
+	auto val1 = 1;
+	auto val2 = 2;
+	auto expected_result = 1;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto less_than = new LessThan(cpu);
+	less_than.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class GreaterThan : Operation {
 	private {
 		Cpu cpu;
@@ -307,6 +383,25 @@ class GreaterThan : Operation {
 		auto result = (val1 > val2) ? 1 : 0;
 		this.cpu.write(instr.val1.val!string, result);
 	}
+}
+
+@test("GreaterThan operation checks if value is greater than other value and sets it in register")
+unittest {
+	auto val1 = 3;
+	auto val2 = 2;
+	auto expected_result = 1;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto greater_than = new GreaterThan(cpu);
+	greater_than.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
 }
 
 class Equal : Operation {
@@ -327,6 +422,25 @@ class Equal : Operation {
 	}
 }
 
+@test("Equal operation checks if values are equal and sets it in register")
+unittest {
+	auto val1 = 2;
+	auto val2 = 2;
+	auto expected_result = 1;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto equal = new Equal(cpu);
+	equal.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class NotEqual : Operation {
 	private {
 		Cpu cpu;
@@ -343,6 +457,26 @@ class NotEqual : Operation {
 		this.cpu.write(instr.val1.val!string, result);
 	}
 }
+
+@test("NotEqual operation checks if values are not equal and sets it in register")
+unittest {
+	auto val1 = 3;
+	auto val2 = 2;
+	auto expected_result = 1;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto not_equal = new NotEqual(cpu);
+	not_equal.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 
 class Move(T) : Operation {
 	private {
