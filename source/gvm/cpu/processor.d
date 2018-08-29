@@ -75,7 +75,7 @@ class Cpu {
 		ops[OpCommand.pop_f32]  = new Pop!float(this, this.stack);
 		ops[OpCommand.put_i32]  = new Put!int(this);
 		ops[OpCommand.put_f32]  = new Put!float(this);
-		ops[OpCommand.call]  	= new Call(this, this.stack, this.func_defs);
+		ops[OpCommand.call]  	= new Call(this, this.func_defs);
 		ops[OpCommand.ret]  	= new Ret(this, this.stack);
 		ops[OpCommand.jmp]  	= new Jump(this);
 		ops[OpCommand.cjmp]  	= new ConditionalJump(this);

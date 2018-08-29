@@ -144,8 +144,8 @@ unittest {
 	auto expected_result = val1 + val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
 
@@ -178,8 +178,8 @@ unittest {
 	auto expected_result = val1 + 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.inc_i32, Command("r0"), Command(val1.to!string));
 
@@ -212,8 +212,8 @@ unittest {
 	auto expected_result = val1 - 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.dec_i32, Command("r0"), Command(val1.to!string));
 
@@ -248,8 +248,8 @@ unittest {
 	auto expected_result = val1 - val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.sub_i32, Command("r0"), Command(val2.to!string));
 
@@ -284,8 +284,8 @@ unittest {
 	auto expected_result = val1 * val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.mul_i32, Command("r0"), Command(val2.to!string));
 
@@ -320,8 +320,8 @@ unittest {
 	auto expected_result = val1 / val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.div_f32, Command("r0"), Command(val2.to!string));
 
@@ -356,8 +356,8 @@ unittest {
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.lt, Command("r0"), Command(val2.to!string));
 
@@ -392,8 +392,8 @@ unittest {
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.gt, Command("r0"), Command(val2.to!string));
 
@@ -429,8 +429,8 @@ unittest {
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.eq, Command("r0"), Command(val2.to!string));
 
@@ -465,8 +465,8 @@ unittest {
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.neq, Command("r0"), Command(val2.to!string));
 
@@ -507,8 +507,8 @@ unittest {
 	auto register_name = "r1";
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	auto instr = Instruction(OpCommand.mov_i32, Command(register_name), Command(val1.to!string));
 
 	auto move = new Move!int(cpu, stack);
@@ -524,8 +524,8 @@ unittest {
 	auto stack_location = "@0";
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	auto instr = Instruction(OpCommand.mov_i32, Command(stack_location), Command(val1.to!string));
 
 	auto move = new Move!int(cpu, stack);
@@ -561,8 +561,8 @@ unittest {
 	auto val1 = 6;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	auto instr = Instruction(OpCommand.push_i32, Command(val1.to!string), Command());
 
 	auto push = new Push!int(cpu, stack);
@@ -595,8 +595,8 @@ unittest {
 	auto val2 = 7;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	stack.push!int(val1);
 	stack.push!int(val2);
 	auto instr = Instruction(OpCommand.pop_i32, Command(val1.to!string), Command());
@@ -648,8 +648,8 @@ unittest {
 	auto offset_cmd = "@$+" ~ offset_str;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	auto instr = Instruction(OpCommand.jmp, Command(offset_cmd), Command());
 
 	auto jump = new Jump(cpu);
@@ -665,8 +665,8 @@ unittest {
 	auto func_def = new FuncDef("function", func_ptr);
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	auto instr = Instruction(OpCommand.jmp, Command(), Command());
 	instr.ptr = func_def.ptr;
 
@@ -704,8 +704,8 @@ unittest {
 	auto func_def = new FuncDef("function", func_ptr);
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("cn", 1);
 
 	auto instr = Instruction(OpCommand.cjmp, Command(), Command());
@@ -725,8 +725,8 @@ unittest {
 	auto func_def = new FuncDef("function", func_ptr);
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] call_stack;
-	auto cpu = new Cpu(stack, call_stack);
+	FuncDef[] func_defs;
+	auto cpu = new Cpu(stack, func_defs);
 	cpu.write("cn", 0);
 	
 	auto instr = Instruction(OpCommand.cjmp, Command(), Command());
@@ -739,7 +739,6 @@ unittest {
 	areEqual(expected_func_ptr, ip);
 }
 
-
 class Call : Operation {
 	private {
 		Cpu cpu;
@@ -747,7 +746,7 @@ class Call : Operation {
 		Jump jump;
 	}
 
-	this(Cpu cpu, Stack!ubyte stack, FuncDef[] func_defs) {
+	this(Cpu cpu, FuncDef[] func_defs) {
 		this.cpu = cpu;
 		this.func_defs = func_defs;
 		jump = new Jump(this.cpu);
@@ -761,6 +760,27 @@ class Call : Operation {
 		jump_instr.ptr = func.ptr;		
 		jump.exec(jump_instr);
 	}	
+}
+
+@test("Call operation jumps to function definition")
+unittest {
+	auto func_ptr = 42;
+	auto func_name = "test_func";
+	auto func_def = new FuncDef(func_name, func_ptr);
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] func_defs;
+	func_defs ~= func_def;
+	auto cpu = new Cpu(stack, func_defs);
+	
+	auto instr = Instruction(OpCommand.call, Command(func_name), Command());
+	instr.ptr = func_def.ptr;
+
+	auto call = new Call(cpu, func_defs);
+	call.exec(instr);
+
+	auto ip = cpu.read_instr_ptr;
+	areEqual(func_ptr, ip);
 }
 
 class Ret : Operation {
