@@ -38,8 +38,7 @@ void run(string[] args) {
 						.array;
 
 	auto stack = new Stack!ubyte();
-	auto call_stack = new Stack!FuncDef();
-	auto cpu = new Cpu(stack, call_stack, func_defs);
+	auto cpu = new Cpu(stack, func_defs);
 
 	cpu.load(instructions);
 	cpu.run();	

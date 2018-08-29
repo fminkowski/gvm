@@ -46,10 +46,10 @@ class Cpu {
 								   	   "r8", "r9", "r10", "r11", 
 								   	   "rs", "ip", "rp", "cn"];
 
-	this(Stack!ubyte stack, Stack!FuncDef call_stack, FuncDef[] func_defs) {
+	this(Stack!ubyte stack, FuncDef[] func_defs) {
 		this.stack = stack;
 		this.func_defs = func_defs;
-		this.call_stack = call_stack;
+		this.call_stack = new Stack!FuncDef();
 		foreach (n; this.registers) {
 			regs[n] = Register();
 		}

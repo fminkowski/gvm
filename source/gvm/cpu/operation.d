@@ -137,6 +137,25 @@ class Add(T) : Operation {
 	}
 }
 
+@test("Add operation adds value and sets result in register")
+unittest {
+	auto val1 = 2;
+	auto val2 = 3;
+	auto expected_result = val1 + val2;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
+
+	auto add = new Add!int(cpu);
+	add.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class Increment(T) : Operation {
 	private {
 		Cpu cpu;
