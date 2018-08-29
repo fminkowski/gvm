@@ -172,6 +172,24 @@ class Increment(T) : Operation {
 	}
 }
 
+@test("Increment operation increases value by 1 and sets result in register")
+unittest {
+	auto val1 = 2;
+	auto expected_result = val1 + 1;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val1.to!string));
+
+	auto increment = new Increment!int(cpu);
+	increment.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class Decrement(T) : Operation {
 	private {
 		Cpu cpu;
@@ -186,6 +204,24 @@ class Decrement(T) : Operation {
 		auto result = --val1;
 		this.cpu.write(instr.val1.val!string, result);
 	}
+}
+
+@test("Decrement operation decreases value by 1 and sets result in register")
+unittest {
+	auto val1 = 2;
+	auto expected_result = val1 - 1;
+
+	auto stack = new Stack!ubyte();
+	FuncDef[] call_stack;
+	auto cpu = new Cpu(stack, call_stack);
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val1.to!string));
+
+	auto decrement = new Decrement!int(cpu);
+	decrement.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
 }
 
 class Subtract(T) : Operation {
