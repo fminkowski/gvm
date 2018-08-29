@@ -139,6 +139,10 @@ class Cpu {
 		this.write("ip", val);
 	}
 
+	int read_instr_ptr() {
+		return this.get("ip").val!int;
+	}
+	
 	void run_func(FuncDef func) {
 		auto func_ip = func.ptr + 1;
 		this.write_instr_ptr(func_ip);
@@ -163,10 +167,6 @@ class Cpu {
 			this.exec(instr);
 			this.inc_instruction_ptr();
 		}
-	}
-
-	int read_instr_ptr() {
-		return this.get("ip").val!int;
 	}
 
 	void write_ret_ptr(int val) {
