@@ -4,9 +4,11 @@ import gvm.cpu.processor;
 import gvm.cpu.instruction;
 import gvm.memory.stack;
 import gvm.util.test;
+import gvm.program.func_def;
 
 import std.algorithm;
 import std.conv;
+
 import gvm.util.algorithm;
 
 enum OpCommand {
@@ -153,13 +155,14 @@ class Add(T) : Operation {
 
 @test("Add operation adds value and sets result in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 2;
 	auto val2 = 3;
 	auto expected_result = val1 + val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.add_i32, Command("r0"), Command(val2.to!string));
 
@@ -188,12 +191,13 @@ class Increment(T) : Operation {
 
 @test("Increment operation increases value by 1 and sets result in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 2;
 	auto expected_result = val1 + 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.inc_i32, Command("r0"), Command(val1.to!string));
 
@@ -222,12 +226,14 @@ class Decrement(T) : Operation {
 
 @test("Decrement operation decreases value by 1 and sets result in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 2;
 	auto expected_result = val1 - 1;
 
 	auto stack = new Stack!ubyte();
 	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.dec_i32, Command("r0"), Command(val1.to!string));
 
@@ -257,13 +263,14 @@ class Subtract(T) : Operation {
 
 @test("Subtract operation subtracts values and sets result in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 5;
 	auto val2 = 2;
 	auto expected_result = val1 - val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.sub_i32, Command("r0"), Command(val2.to!string));
 
@@ -293,13 +300,14 @@ class Multiply(T) : Operation {
 
 @test("Multiply operation multiplies values and sets result in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 5;
 	auto val2 = 2;
 	auto expected_result = val1 * val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.mul_i32, Command("r0"), Command(val2.to!string));
 
@@ -329,13 +337,14 @@ class Divide(T) : Operation {
 
 @test("Divide operation divides values and sets result in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 5;
 	auto val2 = 2;
 	auto expected_result = val1 / val2;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.div_f32, Command("r0"), Command(val2.to!string));
 
@@ -365,13 +374,14 @@ class LessThan : Operation {
 
 @test("LessThan operation checks if value is less than other value and sets it in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 1;
 	auto val2 = 2;
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack,);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.lt, Command("r0"), Command(val2.to!string));
 
@@ -401,13 +411,14 @@ class GreaterThan : Operation {
 
 @test("GreaterThan operation checks if value is greater than other value and sets it in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 3;
 	auto val2 = 2;
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.gt, Command("r0"), Command(val2.to!string));
 
@@ -438,13 +449,14 @@ class Equal : Operation {
 
 @test("Equal operation checks if values are equal and sets it in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 2;
 	auto val2 = 2;
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.eq, Command("r0"), Command(val2.to!string));
 
@@ -474,13 +486,14 @@ class NotEqual : Operation {
 
 @test("NotEqual operation checks if values are not equal and sets it in register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 3;
 	auto val2 = 2;
 	auto expected_result = 1;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("r0", val1);
 	auto instr = Instruction(OpCommand.neq, Command("r0"), Command(val2.to!string));
 
@@ -517,12 +530,13 @@ class Move(T) : Operation {
 
 @test("Move operation moves value to register")
 unittest {
+	import gvm.program.program;
 	auto val1 = 3;
 	auto register_name = "r1";
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	auto instr = Instruction(OpCommand.mov_i32, Command(register_name), Command(val1.to!string));
 
 	auto move = new Move!int(cpu, stack);
@@ -534,12 +548,13 @@ unittest {
 
 @test("Move operation moves value to stack")
 unittest {
+	import gvm.program.program;
 	auto val1 = 3;
 	auto stack_location = "@0";
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	auto instr = Instruction(OpCommand.mov_i32, Command(stack_location), Command(val1.to!string));
 
 	auto move = new Move!int(cpu, stack);
@@ -572,11 +587,12 @@ class Push(T) : Operation {
 
 @test("Push operation pushes value onto stack")
 unittest {
+	import gvm.program.program;
 	auto val1 = 6;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack,);
+	cpu.load(Program());
 	auto instr = Instruction(OpCommand.push_i32, Command(val1.to!string), Command());
 
 	auto push = new Push!int(cpu, stack);
@@ -605,12 +621,13 @@ class Pop(T) : Operation {
 
 @test("Pop operation pops value from stack")
 unittest {
+	import gvm.program.program;
 	auto val1 = 6;
 	auto val2 = 7;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	stack.push!int(val1);
 	stack.push!int(val2);
 	auto instr = Instruction(OpCommand.pop_i32, Command(val1.to!string), Command());
@@ -657,13 +674,14 @@ class Jump : Operation {
 
 @test("Jump operation updates instruction pointer to new instruction")
 unittest {
+	import gvm.program.program;
 	auto offset = 3;
 	auto offset_str = offset.to!string;
 	auto offset_cmd = "@$+" ~ offset_str;
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	auto instr = Instruction(OpCommand.jmp, Command(offset_cmd), Command());
 
 	auto jump = new Jump(cpu);
@@ -675,12 +693,13 @@ unittest {
 
 @test("Jump operation updates instruction pointer to new pointer address")
 unittest {
+	import gvm.program.program;
 	auto func_ptr = 42;
 	auto func_def = new FuncDef("function", func_ptr);
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	auto instr = Instruction(OpCommand.jmp, Command(), Command());
 	instr.ptr = func_def.ptr;
 
@@ -714,12 +733,13 @@ class ConditionalJump : Operation {
 
 @test("Conditional jump operation updates instruction pointer if conditional register is set")
 unittest {
+	import gvm.program.program;
 	auto func_ptr = 42;
 	auto func_def = new FuncDef("function", func_ptr);
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("cn", 1);
 
 	auto instr = Instruction(OpCommand.cjmp, Command(), Command());
@@ -734,13 +754,14 @@ unittest {
 
 @test("Conditional jump operation does not update instruction pointer if conditional register is not set")
 unittest {
+	import gvm.program.program;
 	auto expected_func_ptr = 0;
 	auto func_ptr = 42;
 	auto func_def = new FuncDef("function", func_ptr);
 
 	auto stack = new Stack!ubyte();
-	FuncDef[] func_defs;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
 	cpu.write("cn", 0);
 	
 	auto instr = Instruction(OpCommand.cjmp, Command(), Command());
@@ -778,6 +799,7 @@ class Call : Operation {
 
 @test("Call operation jumps to function definition")
 unittest {
+	import gvm.program.program;
 	auto func_ptr = 42;
 	auto func_name = "test_func";
 	auto func_def = new FuncDef(func_name, func_ptr);
@@ -785,8 +807,8 @@ unittest {
 	auto stack = new Stack!ubyte();
 	FuncDef[] func_defs;
 	func_defs ~= func_def;
-	auto cpu = new Cpu(stack, func_defs);
-	
+	auto cpu = new Cpu(stack);
+	cpu.load(Program(null, func_defs));	
 	auto instr = Instruction(OpCommand.call, Command(func_name), Command());
 	instr.ptr = func_def.ptr;
 
@@ -821,6 +843,7 @@ class Return : Operation {
 
 @test("Return operation writes instruction pointer to return location")
 unittest {
+	import gvm.program.program;
 	auto expected_return_addr = 42;
 	auto func_def = new FuncDef("test_func", 0);
 
@@ -829,7 +852,8 @@ unittest {
 
 	FuncDef[] func_defs;
 	func_defs ~= func_def;
-	auto cpu = new Cpu(stack, func_defs);
+	auto cpu = new Cpu(stack);
+	cpu.load(Program(null, func_defs));
 	cpu.push_call(func_def, expected_return_addr);
 	auto instr = Instruction(OpCommand.call, Command(), Command());
 
@@ -838,18 +862,4 @@ unittest {
 
 	auto ip = cpu.read_instr_ptr;
 	areEqual(expected_return_addr, ip);
-}
-
-class FuncDef {
-	string name;
-	int ptr;
-
-	this(string name, int ptr) {
-		this.name = name;
-		this.ptr = ptr;
-	}
-
-	override string toString() {
-		return "FuncDef("~this.name~", "~this.ptr.to!string~")";
-	}
 }

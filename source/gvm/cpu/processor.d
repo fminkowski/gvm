@@ -4,6 +4,8 @@ import gvm.memory.stack;
 import gvm.cpu.instruction;
 import gvm.cpu.operation;
 import gvm.util.algorithm;
+import gvm.program.program;
+import gvm.program.func_def;
 import gvm.util.test;
 
 import std.conv;
@@ -66,39 +68,12 @@ class Cpu {
 								   	   "r8", "r9", "r10", "r11", 
 								   	   "rs", "ip", "rp", "cn"];
 
-	this(Stack!ubyte stack, FuncDef[] func_defs) {
+	this(Stack!ubyte stack) {
 		this.stack = stack;
-		this.func_defs = func_defs;
 		this.call_stack = new Stack!FuncDef();
 		foreach (n; this.registers) {
 			regs[n] = Register();
 		}
-
-		ops[OpCommand.mov_i32]  = new Move!int(this, this.stack);
-		ops[OpCommand.mov_f32]  = new Move!float(this, this.stack);
-		ops[OpCommand.add_i32]  = new Add!int(this);
-		ops[OpCommand.add_f32]  = new Add!float(this);
-		ops[OpCommand.inc_i32]  = new Increment!int(this);
-		ops[OpCommand.sub_i32]  = new Subtract!int(this);
-		ops[OpCommand.sub_f32]  = new Subtract!float(this);
-		ops[OpCommand.dec_i32]  = new Decrement!int(this);
-		ops[OpCommand.mul_i32]  = new Multiply!int(this);
-		ops[OpCommand.mul_f32]  = new Multiply!float(this);
-		ops[OpCommand.lt]   	= new LessThan(this);
-		ops[OpCommand.gt]   	= new GreaterThan(this);
-		ops[OpCommand.eq]   	= new Equal(this);
-		ops[OpCommand.neq]   	= new NotEqual(this);
-		ops[OpCommand.div_f32]  = new Divide!float(this);
-		ops[OpCommand.push_i32] = new Push!int(this, this.stack);
-		ops[OpCommand.push_f32] = new Push!float(this, this.stack);
-		ops[OpCommand.pop_i32]  = new Pop!int(this, this.stack);
-		ops[OpCommand.pop_f32]  = new Pop!float(this, this.stack);
-		ops[OpCommand.put_i32]  = new Put!int(this);
-		ops[OpCommand.put_f32]  = new Put!float(this);
-		ops[OpCommand.call]  	= new Call(this, this.func_defs);
-		ops[OpCommand.ret]  	= new Return(this, this.stack);
-		ops[OpCommand.jmp]  	= new Jump(this);
-		ops[OpCommand.cjmp]  	= new ConditionalJump(this);
 	}
 
 	Register get(string reg) {
@@ -132,8 +107,10 @@ class Cpu {
 		return dump_string;
 	}
 
-	void load(Instruction[] instructions) {
-		this.instructions = instructions.dup;
+	void load(Program program) {
+		this.instructions = program.instructions;
+		this.func_defs = program.func_defs;
+		this.create_operations();
 		auto static_data_func = this.func_defs.first!FuncDef(f => f.name == static_data_func_name);
 		if (static_data_func !is null) {
 			push_call(static_data_func, static_data_func.ptr);
@@ -207,5 +184,33 @@ class Cpu {
 	private void inc_instruction_ptr() {
 		auto next_instr_ptr = this.read_instr_ptr + 1;
 		write_instr_ptr(next_instr_ptr);
+	}
+
+	private void create_operations() {
+		ops[OpCommand.mov_i32]  = new Move!int(this, this.stack);
+		ops[OpCommand.mov_f32]  = new Move!float(this, this.stack);
+		ops[OpCommand.add_i32]  = new Add!int(this);
+		ops[OpCommand.add_f32]  = new Add!float(this);
+		ops[OpCommand.inc_i32]  = new Increment!int(this);
+		ops[OpCommand.sub_i32]  = new Subtract!int(this);
+		ops[OpCommand.sub_f32]  = new Subtract!float(this);
+		ops[OpCommand.dec_i32]  = new Decrement!int(this);
+		ops[OpCommand.mul_i32]  = new Multiply!int(this);
+		ops[OpCommand.mul_f32]  = new Multiply!float(this);
+		ops[OpCommand.lt]   	= new LessThan(this);
+		ops[OpCommand.gt]   	= new GreaterThan(this);
+		ops[OpCommand.eq]   	= new Equal(this);
+		ops[OpCommand.neq]   	= new NotEqual(this);
+		ops[OpCommand.div_f32]  = new Divide!float(this);
+		ops[OpCommand.push_i32] = new Push!int(this, this.stack);
+		ops[OpCommand.push_f32] = new Push!float(this, this.stack);
+		ops[OpCommand.pop_i32]  = new Pop!int(this, this.stack);
+		ops[OpCommand.pop_f32]  = new Pop!float(this, this.stack);
+		ops[OpCommand.put_i32]  = new Put!int(this);
+		ops[OpCommand.put_f32]  = new Put!float(this);
+		ops[OpCommand.call]  	= new Call(this, this.func_defs);
+		ops[OpCommand.ret]  	= new Return(this, this.stack);
+		ops[OpCommand.jmp]  	= new Jump(this);
+		ops[OpCommand.cjmp]  	= new ConditionalJump(this);
 	}
 }
