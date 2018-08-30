@@ -106,13 +106,10 @@ class Cpu {
 	}
 
 	T get(T)(Command cmd) {
-		if (cmd.is_register()) {
+		if (cmd.is_register) {
 			return to!T(regs[cmd.val!string].val!T());
-		} else if (cmd.is_stack_addr()) {
-			auto location = cmd.offset;
-			if (cmd.is_stack_addr) {
-				location = this.stack.offset(location);
-			}
+		} else if (cmd.is_stack_addr) {
+			auto location = this.stack.offset(cmd.offset);
 			return stack.get!T(location);
 		} else {
 			return cmd.val!T();

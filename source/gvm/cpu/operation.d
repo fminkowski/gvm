@@ -47,7 +47,7 @@ struct Command {
 	}
 
 	bool is_stack_addr() {
-		return _val.startsWith(_stack_addr_sym);
+		return _val.startsWith(_stack_addr_sym) && offset <= 0;
 	}
 
 	bool is_register() {
