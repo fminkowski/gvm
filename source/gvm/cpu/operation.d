@@ -805,6 +805,27 @@ class Ret : Operation {
 	}	
 }
 
+@test("Return operation writes instruction pointer to return location")
+unittest {
+	auto expected_return_addr = 42;
+	auto func_def = new FuncDef("test_func", 0);
+
+	auto stack = new Stack!ubyte();
+	stack.push(expected_return_addr);
+
+	FuncDef[] func_defs;
+	func_defs ~= func_def;
+	auto cpu = new Cpu(stack, func_defs);
+	cpu.push_call(func_def, expected_return_addr);
+	auto instr = Instruction(OpCommand.call, Command(), Command());
+
+	auto ret = new Ret(cpu, stack);
+	ret.exec(instr);
+
+	auto ip = cpu.read_instr_ptr;
+	areEqual(expected_return_addr, ip);
+}
+
 class FuncDef {
 	string name;
 	int ptr;
