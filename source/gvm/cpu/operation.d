@@ -783,7 +783,7 @@ unittest {
 	areEqual(func_ptr, ip);
 }
 
-class Ret : Operation {
+class Return : Operation {
 	private {
 		Cpu cpu;
 		Stack!ubyte stack;
@@ -819,7 +819,7 @@ unittest {
 	cpu.push_call(func_def, expected_return_addr);
 	auto instr = Instruction(OpCommand.call, Command(), Command());
 
-	auto ret = new Ret(cpu, stack);
+	auto ret = new Return(cpu, stack);
 	ret.exec(instr);
 
 	auto ip = cpu.read_instr_ptr;
