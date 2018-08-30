@@ -60,7 +60,7 @@ class Cpu {
 	//rs - func return result
 	//ip - instruction pointer
 	//rp - return pointer
-	//cn - conditional pointer
+	//cn - conditional result
 	static const string[] registers = ["r0", "r1", "r2", "r3",
 								   	   "pp", "r5", "r6", "r7",
 								   	   "r8", "r9", "r10", "r11", 
