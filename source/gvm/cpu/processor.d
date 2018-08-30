@@ -4,6 +4,7 @@ import gvm.memory.stack;
 import gvm.cpu.instruction;
 import gvm.cpu.operation;
 import gvm.util.algorithm;
+import gvm.util.test;
 
 import std.conv;
 
@@ -23,6 +24,25 @@ struct Register {
 	}
 }
 
+@test("Can write int value to register")
+unittest {
+	auto val = 4;
+	auto register = Register();
+	register.write!int(val);
+	auto result = register.val!int;
+
+	areEqual(val, result);
+}
+
+@test("Can write float value to register")
+unittest {
+	auto val = 4.2f;
+	auto register = Register();
+	register.write!float(val);
+	auto result = register.val!float;
+
+	areEqual(val, result);
+}
 
 class Cpu {
 	private {
