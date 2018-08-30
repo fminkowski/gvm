@@ -78,10 +78,6 @@ struct Command {
 		return to!int(loc);
 	}
 
-	bool is_func() {
-		return _val.startsWith(":");
-	}
-
 	@property T val(T)(){
 		return to!(T)(_val);
 	}
@@ -113,6 +109,24 @@ unittest {
 	auto cmd = Command("@$+2");
 	auto offset = cmd.offset;
 	areEqual(2, offset);
+}
+
+@test("Check if command is a stack value")
+unittest {
+	auto cmd1 = Command("@0");
+	isTrue(cmd1.is_stack_addr);
+
+	auto cmd2 = Command("r0");
+	isFalse(cmd2.is_stack_addr);
+}
+
+@test("Check if command is a register value")
+unittest {
+	auto cmd1 = Command("r0");
+	isTrue(cmd1.is_register);
+
+	auto cmd2 = Command("@0");
+	isFalse(cmd2.is_register);
 }
 
 abstract class Operation {
