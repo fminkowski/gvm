@@ -110,7 +110,7 @@ class Cpu {
 			return to!T(regs[cmd.val!string].val!T());
 		} else if (cmd.is_stack_addr()) {
 			auto location = cmd.offset;
-			if (location < 0) {
+			if (cmd.is_stack_addr) {
 				location = this.stack.offset(location);
 			}
 			return stack.get!T(location);
