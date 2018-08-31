@@ -48,12 +48,11 @@ unittest {
 
 class Cpu {
 	private {
-		FuncDef[] func_defs;
+		Program program;
 		Stack!ubyte stack;
 		Stack!FuncDef call_stack;
 		Register[string] regs;
 		Operation[OpCommand] ops;
-		Instruction[] instructions;
 		static const string static_data_func_name = "static_data";
 		static const string main_func_name = "main";
 	}
@@ -108,10 +107,9 @@ class Cpu {
 	}
 
 	void load(Program program) {
-		this.instructions = program.instructions;
-		this.func_defs = program.func_defs;
+		this.program = program;
 		this.create_operations();
-		auto static_data_func = this.func_defs.first!FuncDef(f => f.name == static_data_func_name);
+		auto static_data_func = this.program.func_defs.first!FuncDef(f => f.name == static_data_func_name);
 		if (static_data_func !is null) {
 			push_call(static_data_func, static_data_func.ptr);
 			run_simple_func(static_data_func);
@@ -119,7 +117,7 @@ class Cpu {
 	}
 
 	void run() {
-		auto main_func = this.func_defs.first!FuncDef(f => f.name == main_func_name);		
+		auto main_func = this.program.func_defs.first!FuncDef(f => f.name == main_func_name);		
 		push_call(main_func, main_func.ptr);
 		this.run_func(main_func);
 	}
@@ -143,7 +141,7 @@ class Cpu {
 		size_t ip = -1;
 		while (ip != func.ptr) {
 			ip = this.read_instr_ptr;
-			auto instr = this.instructions[ip];
+			auto instr = this.program.instructions[ip];
 			this.exec(instr);
 			ip = this.read_instr_ptr;
 			this.inc_instruction_ptr();
@@ -156,7 +154,7 @@ class Cpu {
 		size_t ip;
 		while (true) {
 			ip = this.read_instr_ptr;
-			auto instr = this.instructions[ip];
+			auto instr = this.program.instructions[ip];
 			if (instr.op_cmd == OpCommand.ret) break; 
 			this.exec(instr);
 			this.inc_instruction_ptr();
@@ -208,7 +206,7 @@ class Cpu {
 		ops[OpCommand.pop_f32]  = new Pop!float(this, this.stack);
 		ops[OpCommand.put_i32]  = new Put!int(this);
 		ops[OpCommand.put_f32]  = new Put!float(this);
-		ops[OpCommand.call]  	= new Call(this, this.func_defs);
+		ops[OpCommand.call]  	= new Call(this, this.program.func_defs);
 		ops[OpCommand.ret]  	= new Return(this, this.stack);
 		ops[OpCommand.jmp]  	= new Jump(this);
 		ops[OpCommand.cjmp]  	= new ConditionalJump(this);
