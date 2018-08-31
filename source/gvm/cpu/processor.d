@@ -107,6 +107,14 @@ class Cpu {
 	void load(Program program) {
 		this.program = program;
 		this.create_operations();
+	}
+
+	void run() {
+		this.run_static_func();
+		this.run_main_func();
+	}
+
+	void run_static_func() {
 		auto static_data_func = this.program.func_defs.first!FuncDef(f => f.name == static_data_func_name);
 		if (static_data_func !is null) {
 			push_call(static_data_func, static_data_func.ptr);
@@ -114,7 +122,7 @@ class Cpu {
 		}
 	}
 
-	void run() {
+	void run_main_func() {
 		auto main_func = this.program.func_defs.first!FuncDef(f => f.name == main_func_name);		
 		push_call(main_func, main_func.ptr);
 		this.run_func(main_func);
