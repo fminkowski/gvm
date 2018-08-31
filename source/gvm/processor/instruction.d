@@ -2,6 +2,7 @@ module gvm.processor.instruction;
 
 import gvm.processor.cpu;
 import gvm.processor.operation;
+import gvm.program;
 
 import std.array;
 import std.algorithm;

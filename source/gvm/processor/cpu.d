@@ -4,8 +4,7 @@ import gvm.memory.stack;
 import gvm.processor.instruction;
 import gvm.processor.operation;
 import gvm.util.algorithm;
-import gvm.program.program;
-import gvm.program.func_def;
+import gvm.program;
 import gvm.util.test;
 import gvm.processor.register;
 

@@ -4,7 +4,7 @@ import gvm.processor.cpu;
 import gvm.processor.operation;
 import gvm.processor.instruction;
 import gvm.memory.stack;
-import gvm.program.program;
+import gvm.program;
 
 void run(string[] args) {
 

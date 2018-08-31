@@ -1,4 +1,5 @@
 module gvm.program.func_def;
+
 import std.conv;
 
 class FuncDef {
