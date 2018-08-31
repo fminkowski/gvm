@@ -1,8 +1,8 @@
 module gvm.program.program;
 
-import gvm.cpu.instruction;
+import gvm.processor.instruction;
 import gvm.program.func_def;
-import gvm.cpu.operation;
+import gvm.processor.operation;
 
 import std.file;
 import std.algorithm;

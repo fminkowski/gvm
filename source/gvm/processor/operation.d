@@ -1,7 +1,7 @@
-module gvm.cpu.operation;
+module gvm.processor.operation;
 
-import gvm.cpu.processor;
-import gvm.cpu.instruction;
+import gvm.processor.cpu;
+import gvm.processor.instruction;
 import gvm.memory.stack;
 import gvm.util.test;
 import gvm.program.func_def;

@@ -1,7 +1,7 @@
-module gvm.cpu.instruction;
+module gvm.processor.instruction;
 
-import gvm.cpu.processor;
-import gvm.cpu.operation;
+import gvm.processor.cpu;
+import gvm.processor.operation;
 
 import std.array;
 import std.algorithm;
