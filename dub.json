@@ -1,9 +1,8 @@
 {
 	"name": "gvm",
 	"authors": [
-		"Fred"
+		"fminkowski"
 	],
-	"description": "A simple virtual machine.",
-	"copyright": "Copyright © 2018, Fred",
-	"license": "proprietary"
+	"description": "A virtual machine in D.",
+	"license": "MIT"
 }
