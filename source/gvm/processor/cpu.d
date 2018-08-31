@@ -171,6 +171,7 @@ class Cpu {
 		ops[OpCommand.eq]   	= new Equal(this);
 		ops[OpCommand.neq]   	= new NotEqual(this);
 		ops[OpCommand.and]   	= new And(this);
+		ops[OpCommand.or]   	= new Or(this);
 		ops[OpCommand.div_f32]  = new Divide!float(this);
 		ops[OpCommand.push_i32] = new Push!int(this, this.stack);
 		ops[OpCommand.push_f32] = new Push!float(this, this.stack);
