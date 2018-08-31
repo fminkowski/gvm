@@ -13,12 +13,13 @@ It has its own assembly like language. Currently a limited set of instructions a
 11. gt (greater than check)
 12. eq (equality check)
 13. neq (not equal check)
-14. push (push value onto stack)
-15. pop (pop value from stack)
-16. put (prints value to stdio - for debugging)
-17. func (creates a function defintion)
-18. call (call a function)
-19. ret (return from a function)
+14. and (bit and)
+15. push (push value onto stack)
+16. pop (pop value from stack)
+17. put (prints value to stdio - for debugging)
+18. func (creates a function defintion)
+19. call (call a function)
+20. ret (return from a function)
 
 Operations that depend on the size of the operand are appended with a type, currently i32 for 32 bit wide ints and f32 for 32 bit floats. This syntax is subject to change. To see some examples, please refer to the examples directory. 
 
