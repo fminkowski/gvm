@@ -57,15 +57,13 @@ class Cpu {
 		static const string main_func_name = "main";
 	}
 
-	//r0 - r11 gen registers
+	//r0, r1 general registers
 	//rs - func return result
 	//ip - instruction pointer
 	//rp - return pointer
+	//pp - value popped from stack
 	//cn - conditional result
-	static const string[] registers = ["r0", "r1", "r2", "r3",
-								   	   "pp", "r5", "r6", "r7",
-								   	   "r8", "r9", "r10", "r11", 
-								   	   "rs", "ip", "rp", "cn"];
+	static const string[] registers = ["r0", "r1", "pp", "rs", "ip", "rp", "cn"];
 
 	this(Stack!ubyte stack) {
 		this.stack = stack;
