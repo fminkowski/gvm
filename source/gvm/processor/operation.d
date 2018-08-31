@@ -523,6 +523,26 @@ class And : Operation {
 	}
 }
 
+@test("And operation does bit wise and")
+unittest {
+	import gvm.program.program;
+	auto val1 = 3;
+	auto val2 = 6;
+	auto expected_result = 2;
+
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	cpu.load(Program());
+	cpu.write("r0", val1);
+	auto instr = Instruction(OpCommand.gt, Command("r0"), Command(val2.to!string));
+
+	auto and = new And(cpu);
+	and.exec(instr);
+
+	auto register = cpu.get("r0");
+	areEqual(expected_result, register.val!int);
+}
+
 class Move(T) : Operation {
 	private {
 		Cpu cpu;
