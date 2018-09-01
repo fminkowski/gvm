@@ -137,17 +137,7 @@ Multiply value in register with another value and sets result back in register. 
 ```
 push_i32 2;
 mov_i32 r0 4;
-add_i32 r0 @$-1;
-```
-`r0` will contain the value 8;
-
-## mul (Multiply)
-Multiply value in register with another value and sets result back in register. After the instructions
-
-```
-push_i32 2;
-mov_i32 r0 4;
-add_i32 r0 @$-1;
+mul_i32 r0 @$-1;
 ```
 `r0` will contain the value 8;
 
@@ -227,7 +217,7 @@ Bitwise xor two values, set result into destination register.
 ```
 push_f32 3;
 mov_f32 r0 6;
-or r0 @$-1;
+xor r0 @$-1;
 ```
 `r0` will contain the value 5;
 
