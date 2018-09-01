@@ -12,3 +12,4 @@ vm-test-*
 *.o
 *.obj
 *.lst
+*.sublime-workspace

@@ -1,6 +1,12 @@
 # GVM is the Gi Virtual Machine
+To run any of the examples in the examples directory, clone the project, cd to the cloned location and run
+```
+	dub -- ./examples/simple.gvm
+```
+To run a different example, replace `simple.gvm` with any file in the examples directory.
+
 GVM has its own assembly like language. Currently a limited set of instructions are supported. Some instructions include 
-1. mov (mov a value a stack address or register)
+1. mov (mov a value to a stack address or register)
 2. jmp (jump to instruction)
 3. cjmp (conditionally jump to instruction)
 4. add
