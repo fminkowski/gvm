@@ -5,7 +5,6 @@ import gvm.processor.operation;
 import gvm.program;
 
 import std.array;
-import std.algorithm;
 import std.conv;
 
 struct Instruction {
