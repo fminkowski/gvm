@@ -229,7 +229,7 @@ xor r0 @$-1;
 `r0` will contain the value 5;
 
 ## func (Function)
-A block of code can be declared with the `func` keyword. This enables code reusability. Follow the func keyword with name and end it with semi-colon.
+A block of code can be declared with the `func` keyword. This enables code reusability. Follow the func keyword with the function name and end it with semi-colon.
 
 ```
 func my_func;
@@ -252,10 +252,10 @@ pop_i32;
 pop_i32;
 ret;
 ```
-A return value should be set into register `rs` or moved onto the stack for the caller.
+A return value should be set into register `rs` or moved onto stack space allocated by the caller.
 
 ## ret (Return)
 Marks a function as complete and returns to the callee. All values pushed onto the stack in the function must be popped off the stack before calling ret. This must be done so the correct return address is retrieved so `ret` jumps to the correct location. Support for automatic stack cleanup may be added in the future.
 
 ## call (Call function) 
-Calls a function with a matching label. The return address is automatically pushed onto the stack for the callee. `call` unconditionally jump to the function specified and execute the first instruction after the function definition.
+Calls a function with a matching label. The return address is automatically pushed onto the stack for the callee. `call` unconditionally jumps to the function specified and executes the first instruction after the function declaration.
