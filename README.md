@@ -108,3 +108,43 @@ mov_i32 r0 4;
 sub_i32 r0 @$-1;
 ```
 `r0` will contain the value 3.
+
+## inc (Increment)
+Increments value in register by one, and sets result back in register. After the instructions
+
+```
+push_i32 1;
+mov_i32 r0 @$-1;
+inc r0;
+```
+`r0` will contain the value 2.
+
+## dec (Decrement)
+Decrements value in register by one, and sets result back in register. After the instructions
+
+```
+push_i32 3;
+mov_i32 r0 @$-1;
+dec r0;
+```
+`r0` will contain the value 2.
+
+## mul (Multiply)
+Multiply value in register with another value and sets result back in register. After the instructions
+
+```
+push_i32 2;
+mov_i32 r0 4;
+add_i32 r0 @$-1;
+```
+`r0` will contain the value 8;
+
+## mul (Multiply)
+Multiply value in register with another value and sets result back in register. After the instructions
+
+```
+push_i32 2;
+mov_i32 r0 4;
+add_i32 r0 @$-1;
+```
+`r0` will contain the value 8;
