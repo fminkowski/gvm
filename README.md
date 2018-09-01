@@ -14,7 +14,7 @@ Instructions are of the form
 ```
 Where `op` is the operation, `dest` is the destination of the computation, and `src` is the data source.
 
-Operations that depend on the size of the operand are appended with a type, currently i32 for 32 bit wide ints and f32 for 32 bit floats. This syntax is subject to change. To see some examples, refer to the examples directory. 
+Operations that depend on the size of the operand are appended with a type, currently i32 for 32 bit wide ints and f32 for 32 bit floats. This syntax is subject to change.
 
 Comments are created by starting a line with // and ending it with ;.
 
