@@ -56,8 +56,8 @@ push_i32 5;
 
 will jump to instruction `put_i32 1234;`, not output 1234, move on to push 3 onto the stack, then print 3.
 
-#Operations
-##mov (Move)
+# Operations
+## mov (Move)
 Moves values between the stack and registers. Some operations include:
 
 1. Constant values can be moved to a stack location or a register. 
@@ -72,14 +72,14 @@ Moves values between the stack and registers. Some operations include:
 5. Register values can be moved to other registers.
 	* `mov_i32 r0 r1;`
 
-##jmp (Jump)
+## jmp (Jump)
 Jump unconditionally to an instruction. The instruction jumped to is not executed, the next instruction will be executed.
 
 `jmp @$+2;`
 
 will jump forward two instructions.
 
-##cjmp (Conditionally Jump)
+## cjmp (Conditionally Jump)
 Conditionally jumps to an instruction based on the value set in the `cn` register. If the `cn` register is non-zero, then the jump will happen.
 
 ```
@@ -89,7 +89,7 @@ cjmp @$+2;
 
 This jump will happen since the `cn` register is non-zero.
 
-##add (Addition)
+## add (Addition)
 Adds value in register to another value and sets result back in register. After the instructions
 
 ```
@@ -99,7 +99,7 @@ add_i32 r0 @$-1;
 ```
 `r0` will contain the value 5.
 
-##sub (Subtraction)
+## sub (Subtraction)
 Subtracts value in register from another value and sets result back in register. After the instructions
 
 ```
