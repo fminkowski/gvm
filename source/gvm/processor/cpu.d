@@ -14,12 +14,12 @@ class Cpu {
 	private {
 		Program program;
 		Stack!ubyte stack;
-		Stack!FuncDef call_stack;
 		Register[string] regs;
 		Operation[OpCommand] ops;
 		static const string static_data_func_name = "static_data";
 		static const string main_func_name = "main";
 	}
+	Stack!FuncDef call_stack;
 
 	//r0, r1 general registers
 	//rs - func return result
@@ -100,10 +100,6 @@ class Cpu {
 	void write_instr_ptr(int val) {
 		this.write("ip", val);
 	}
-
-	int read_instr_ptr() {
-		return this.get("ip").val!int;
-	}
 	
 	void run_func(FuncDef func) {
 		auto func_ip = func.ptr + 1;
@@ -154,6 +150,10 @@ class Cpu {
 		write_instr_ptr(next_instr_ptr);
 	}
 
+	int read_instr_ptr() {
+		return this.get("ip").val!int;
+	}
+	
 	private void create_operations() {
 		ops[OpCommand.mov_i32]  = new Move!int(this, this.stack);
 		ops[OpCommand.mov_f32]  = new Move!float(this, this.stack);
@@ -185,4 +185,145 @@ class Cpu {
 		ops[OpCommand.jmp]  	= new Jump(this);
 		ops[OpCommand.cjmp]  	= new ConditionalJump(this);
 	}
+}
+
+import gvm.util.test;
+
+@test("Can read and write to cpu register")
+unittest {
+	auto val = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	cpu.write!int("r0", val);
+	auto result = cpu.get!int(Command("r0"));
+	areEqual(val, result);
+}
+
+@test("Can read from stack")
+unittest {
+	auto val = 42;
+	auto cmd = Command("@$-2");
+	auto stack = new Stack!ubyte();
+	stack.push(val);
+	stack.push(1);
+	auto cpu = new Cpu(stack);
+	auto result = cpu.get!int(cmd);
+	areEqual(val, result);
+}
+
+@test("Get for command that is not a register or stack address return command value")
+unittest {
+	auto expected = 2;
+	auto cmd = Command(expected.to!string);
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	auto result = cpu.get!int(cmd);
+	areEqual(expected, result);
+}
+
+@test("writes instruction pointer")
+unittest {
+	auto expected = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	cpu.write_instr_ptr(expected);
+	auto result = cpu.get("ip");
+	areEqual(expected, result.val!int);
+}
+
+@test("reads instruction pointer")
+unittest {
+	auto expected = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	cpu.write_instr_ptr(expected);
+	auto result = cpu.read_instr_ptr;
+	areEqual(expected, result);
+}
+
+@test("writes return pointer")
+unittest {
+	auto expected = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	cpu.write_ret_ptr(expected);
+	auto result = cpu.get("rp");
+	areEqual(expected, result.val!int);
+}
+
+@test("reads return pointer")
+unittest {
+	auto expected = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	cpu.write_ret_ptr(expected);
+	auto result = cpu.read_ret_ptr;
+	areEqual(expected, result);
+}
+
+@test("pushes function call onto call stack and return addr onto stack")
+unittest {
+	auto expected_ret_addr = 42;
+	auto func_name = "my_func";
+	auto func_def = new FuncDef(func_name, 43);
+
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+
+	cpu.push_call(func_def, expected_ret_addr);
+	auto call_stack = cpu.call_stack;
+
+	auto pushed_func = call_stack.top!FuncDef;
+	areEqual(func_name, pushed_func.name);
+
+	auto actual_ret_addr = stack.top!int;
+	areEqual(expected_ret_addr, actual_ret_addr);
+}
+
+@test("pops function call from call stack and return addr from stack")
+unittest {
+	auto expected_ret_addr = 42;
+	auto func_name = "my_func";
+	auto func_def = new FuncDef(func_name, 43);
+
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+
+	cpu.push_call(func_def, expected_ret_addr);
+	cpu.push_call(new FuncDef("Test", 0), 44);
+	cpu.pop_call();
+
+	auto call_stack = cpu.call_stack;
+
+	auto pushed_func = call_stack.top!FuncDef;
+	areEqual(func_name, pushed_func.name);
+
+	auto actual_ret_addr = stack.top!int;
+	areEqual(expected_ret_addr, actual_ret_addr);
+}
+
+@test("increase instruction pointer by 1")
+unittest {
+	auto current_ip = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+
+	cpu.write("ip", current_ip);
+	cpu.inc_instruction_ptr();
+
+	auto result = cpu.get("ip").val!int;
+	areEqual(current_ip + 1, result);
+}
+
+@test("reads instruction pointer")
+unittest {
+	auto current_ip = 42;
+	auto stack = new Stack!ubyte();
+	auto cpu = new Cpu(stack);
+	
+	cpu.write("ip", current_ip);
+	cpu.inc_instruction_ptr();
+
+	auto result = cpu.read_instr_ptr;
+	areEqual(current_ip + 1, result);
 }
