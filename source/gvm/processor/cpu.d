@@ -165,6 +165,8 @@ class Cpu {
 		ops[OpCommand.dec_i32]  = new Decrement!int(this);
 		ops[OpCommand.mul_i32]  = new Multiply!int(this);
 		ops[OpCommand.mul_f32]  = new Multiply!float(this);
+		ops[OpCommand.div_i32]  = new Divide!int(this);
+		ops[OpCommand.div_f32]  = new Divide!float(this);
 		ops[OpCommand.lt]   	= new LessThan(this);
 		ops[OpCommand.gt]   	= new GreaterThan(this);
 		ops[OpCommand.eq]   	= new Equal(this);
@@ -172,7 +174,6 @@ class Cpu {
 		ops[OpCommand.and]   	= new And(this);
 		ops[OpCommand.or]   	= new Or(this);
 		ops[OpCommand.xor]   	= new XOr(this);
-		ops[OpCommand.div_f32]  = new Divide!float(this);
 		ops[OpCommand.push_i32] = new Push!int(this, this.stack);
 		ops[OpCommand.push_f32] = new Push!float(this, this.stack);
 		ops[OpCommand.pop_i32]  = new Pop!int(this, this.stack);
