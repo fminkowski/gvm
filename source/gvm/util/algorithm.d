@@ -22,14 +22,14 @@ T first(T)(T[] collection, bool delegate(T) cmp) {
 	return result;
 }
 
-@("first returns first value in simple array")
+@test("first returns first value in simple array")
 unittest {
 	auto collection = [1,2,3];
 	auto result = collection.first!int(x => x == 2);
 	areEqual(2, result);
 }
 
-@("first returns first value in array with complex types")
+@test("first returns first value in array with complex types")
 unittest {
 	struct Test {
 		int id;
