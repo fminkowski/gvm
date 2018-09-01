@@ -5,29 +5,7 @@ To run any of the examples in the examples directory, clone the project, cd to t
 ```
 To run a different example, replace `simple.gvm` with any file in the examples directory.
 
-GVM has its own assembly like language. Currently a limited set of instructions are supported. Some instructions include 
-1. mov (mov a value to a stack address or register)
-2. jmp (jump to instruction)
-3. cjmp (conditionally jump to instruction)
-4. add
-5. sub
-6. inc (increment a value by 1)
-7. dec (decrement a value by 1)
-8. mul (multiply)
-9. div (divide)
-10. lt (less than check)
-11. gt (greater than check)
-12. eq (equality check)
-13. neq (not equal check)
-14. and (bit and)
-15. or (bit or)
-16. xor (bit xor)
-17. push (push value onto stack)
-18. pop (pop value from stack)
-19. put (prints value to stdio - for debugging)
-20. func (creates a function defintion)
-21. call (call a function)
-22. ret (return from a function)
+GVM has its own assembly like language. Currently a basic set of instructions are supported. See below documentation of instructions for more detail.
 
 Operations that depend on the size of the operand are appended with a type, currently i32 for 32 bit wide ints and f32 for 32 bit floats. This syntax is subject to change. To see some examples, refer to the examples directory. 
 
@@ -65,7 +43,7 @@ Pushes value onto stack
 push_f32 3;
 ```
 
-## push
+## pop
 Pops value from stack and sets popped value into register `pp`
 
 ```
