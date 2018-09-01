@@ -48,4 +48,4 @@ push_i32 4;
 push_i32 5;
 ```
 
-will jump to instruction `put_i32 1234;`, not output 1234, move on to push 3 onto the stack, then print 3;
+will jump to instruction `put_i32 1234;`, not output 1234, move on to push 3 onto the stack, then print 3.
