@@ -7,6 +7,13 @@ To run a different example, replace `simple.gvm` with any file in the examples d
 
 GVM has its own assembly like language. Currently a basic set of instructions are supported. See below documentation of instructions for more detail.
 
+Instructions are of the form
+```
+	op dest src;
+	op src;
+```
+Where `op` is the operation, `dest` is the destination of the computation, and `src` is the data source.
+
 Operations that depend on the size of the operand are appended with a type, currently i32 for 32 bit wide ints and f32 for 32 bit floats. This syntax is subject to change. To see some examples, refer to the examples directory. 
 
 Comments are created by starting a line with // and ending it with ;.
