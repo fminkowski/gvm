@@ -5,7 +5,7 @@ To run any of the examples in the examples directory, clone the project, cd to t
 ```
 To run a different example, replace `simple.gvm` with any file in the examples directory.
 
-GVM has its own assembly like language. Currently a basic set of instructions are supported. See below documentation of instructions for more detail.
+GVM has its own assembly like language. Currently a basic set of instructions are supported. See operation documentation below for more detail.
 
 Instructions are of the form
 ```
